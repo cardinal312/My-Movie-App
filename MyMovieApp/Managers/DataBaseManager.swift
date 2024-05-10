@@ -22,7 +22,6 @@ final class DataBaseManager {
     static let shared = DataBaseManager()
     private init() {}
     
-    
     func fetchUser(compleation: @escaping (User?, NetworkError?) -> Void) {
         guard let userUID = Auth.auth().currentUser?.uid else { return }
         
