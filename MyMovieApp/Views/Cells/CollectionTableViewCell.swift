@@ -16,7 +16,7 @@ final class CollectionTableViewCell: UITableViewCell {
     // MARK: - Variables
     static let identifier = "CollectionTableViewCell"
     private var titles: [Title] = []
-    
+    var visibleIndexPath: IndexPath? = nil
     weak var delegate: CollectionTableViewCellDelegate?
     
     // MARK: - UI Components
@@ -141,7 +141,7 @@ extension CollectionTableViewCell: UICollectionViewDelegate, UICollectionViewDat
                     guard let self = self else { return }
                     
                     // TODO: - Share implementations
-                        let shareActivity = UIActivityViewController(activityItems: ["Please share with My Movie App with your friends! 😍🔥"], applicationActivities: nil)
+                    let shareActivity = UIActivityViewController(activityItems: ["Please share with My Movie App with your friends! 😍🔥"], applicationActivities: nil)
                         if let vc = UIApplication.shared.windows.first?.rootViewController{
                             vc.present(shareActivity, animated: true, completion: nil)
                     }
@@ -171,5 +171,35 @@ extension CollectionTableViewCell: UICollectionViewDelegate, UICollectionViewDat
             }
         }
         return config
+    }
+ 
+    //MARK: - Cells animations
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        var visibleRect = CGRect()
+        visibleRect.origin = collectionView.contentOffset; visibleRect.size = collectionView.bounds.size
+        
+        let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
+        
+        if let visibleIndexPath = collectionView.indexPathForItem(at: visiblePoint) {
+            self.visibleIndexPath = visibleIndexPath }
+        }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+
+            if let visibleIndexPath = self.visibleIndexPath {
+
+                // This conditional makes sure you only animate cells from the bottom and not the top, your choice to remove.
+                if indexPath.row > visibleIndexPath.row {
+
+                    cell.contentView.alpha = 0.3
+                    cell.layer.transform = CATransform3DMakeScale(0.5, 0.5, 0.5)
+
+                    // Simple Animation
+                    UIView.animate(withDuration: 0.5) {
+                        cell.contentView.alpha = 1
+                        cell.layer.transform = CATransform3DScale(CATransform3DIdentity, 1, 1, 1)
+                }
+            }
+        }
     }
 }
