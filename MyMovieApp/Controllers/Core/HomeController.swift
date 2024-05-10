@@ -44,6 +44,7 @@ final class HomeController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        self.navigationController?.navigationBar.tintColor = .gray
     }
     
     private func configureHeroHeaderView() {
@@ -81,21 +82,13 @@ final class HomeController: UIViewController {
     private func configureNavBar() {
         var image = UIImage(named: .homeLeftBarButton)
         image = image?.withRenderingMode(.alwaysOriginal)
-        let leftBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: #selector(didTapAppIconButton))
+        let leftBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
         self.navigationController?.navigationBar.topItem?.leftBarButtonItem = leftBarButtonItem
         
         self.navigationController?.navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "person"), style:
                 .done, target: self, action: #selector(didTaprightBarButton))
-        self.navigationController?.navigationBar.tintColor = .white
     }
-    
-    @objc private func didTapAppIconButton() {
-        let shareActivity = UIActivityViewController(activityItems: ["Please share with My Movie App with your friends! 😍🔥"], applicationActivities: nil)
-        if let vc = UIApplication.shared.windows.first?.rootViewController{
-            vc.present(shareActivity, animated: true, completion: nil)
-        }
-    }
-    
+
     @objc private func didTaprightBarButton() {
         let vc = ProfileController()
         let nav = UINavigationController(rootViewController: vc)

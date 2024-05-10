@@ -121,6 +121,7 @@ extension CollectionTableViewCell: UICollectionViewDelegate, UICollectionViewDat
         }
     }
     
+    //MARK: - UIMENU ACTIONS
     @available(iOS 16.0, *)
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
         
@@ -134,21 +135,41 @@ extension CollectionTableViewCell: UICollectionViewDelegate, UICollectionViewDat
                     // TODO: - Core Data
                     self.downloadTitleAt(indexPath: indexPaths[0])
                 }
-                return UIMenu(title: "", identifier: nil, options: .displayInline, children: [downloadAction])
+                
+                //share action
+                let shareAction = UIAction(title: "Share", subtitle: nil, image: nil, identifier: nil, discoverabilityTitle: nil, state: .off) { [weak self] _ in
+                    guard let self = self else { return }
+                    
+                    // TODO: - Share implementations
+                        let shareActivity = UIActivityViewController(activityItems: ["Please share with My Movie App with your friends! 😍🔥"], applicationActivities: nil)
+                        if let vc = UIApplication.shared.windows.first?.rootViewController{
+                            vc.present(shareActivity, animated: true, completion: nil)
+                    }
+                }
+                return UIMenu(title: "", identifier: nil, options: .displayInline, children: [downloadAction, shareAction])
+                
             } else {
                 
                 // Fallback on earlier versions
                 let downloadAction = UIAction(title: "Download", subtitle: nil, image: nil, identifier: nil, discoverabilityTitle: nil, state: .off) { [weak self] _ in
                     guard let self = self else { return }
                     
-                    // TODO: - Core Data
+                    //MARK: - Core Data
                     self.downloadTitleAt(indexPath: indexPaths[0])
                 }
-                return UIMenu(title: "", identifier: nil, options: .displayInline, children: [downloadAction])
+                //share action
+                let shareAction = UIAction(title: "Share", subtitle: nil, image: nil, identifier: nil, discoverabilityTitle: nil, state: .off) { [weak self] _ in
+                    guard let self = self else { return }
+                    
+                    // TODO: - Share implementations
+                        let shareActivity = UIActivityViewController(activityItems: ["Please share with My Movie App with your friends! 😍🔥"], applicationActivities: nil)
+                        if let vc = UIApplication.shared.windows.first?.rootViewController{
+                            vc.present(shareActivity, animated: true, completion: nil)
+                    }
+                }
+                return UIMenu(title: "", identifier: nil, options: .displayInline, children: [downloadAction, shareAction])
             }
         }
         return config
     }
-    
-    
 }

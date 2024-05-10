@@ -24,14 +24,17 @@ extension AlertManager {
     
     public static func showInvalidEmailAlert(on vc: UIViewController) {
         self.showBasicAlert(on: vc, title: "Invalid Email", message: "Please enter a valid email.")
+        return
     }
     
     public static func showInvalidPasswordAlert(on vc: UIViewController) {
         self.showBasicAlert(on: vc, title: "Invalid Password", message: "Please enter a valid password.")
+        return
     }
     
     public static func showInvalidUserNameAlert(on vc: UIViewController) {
         self.showBasicAlert(on: vc, title: "Invalid Username", message: "Please enter a valid Username.")
+        return
     }
 }
 

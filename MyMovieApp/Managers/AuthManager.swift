@@ -44,7 +44,8 @@ final class AuthManager {
                 .setData([
                     "username" : username,
                     "email" : email,
-                    "avatar" : avatar
+                    "avatar" : avatar,
+                    "userID" : result?.user.uid
                 ]) { error in
                     if let error = error {
                         print(error)
@@ -81,35 +82,6 @@ final class AuthManager {
     func forgotPassword(with email: String, compleation: @escaping (Error?) -> Void) {
         Auth.auth().sendPasswordReset(withEmail: email) { error in
             compleation(error)
-        }
-    }
-    
-    func fetchUser(compleation: @escaping (User?, NetworkError?) -> Void) {
-        guard let userUID = Auth.auth().currentUser?.uid else { return }
-        
-        let db = Firestore.firestore()
-        
-        db.collection("users")
-            .document(userUID)
-            .getDocument { snapshot, error in
-                
-                if let error = error {
-                    print(error)
-                    compleation(nil, .fetchUser)
-                    return
-                }
-                
-                if let snapshot = snapshot, let snapshotData = snapshot.data() {
-                    let username = snapshotData["username"] as? String
-                    let email = snapshotData["email"] as? String
-                    let avatar = snapshotData["avatar"] as? String
-
-                    let user = User(username: username ?? "", email: email ?? "", avatar: avatar ?? "")
-                    
-                    DispatchQueue.main.async {
-                        compleation(user, nil)
-                }
-            }
         }
     }
 }

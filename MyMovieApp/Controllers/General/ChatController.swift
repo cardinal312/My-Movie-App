@@ -8,6 +8,7 @@
 import UIKit
 import MessageKit
 import InputBarAccessoryView
+import SDWebImage
 
 struct Message: MessageType {
     var sender: MessageKit.SenderType
@@ -25,42 +26,54 @@ struct Sender: SenderType {
 final class ChatController: MessagesViewController {
     
     //MARK: - Variables
-    private var messages: [Message] = [] {
-        didSet {
-            self.updateMassases()
-        }
-    }
+    private var messages: [Message] = []
+    let dataBaseManger = DataBaseManager.shared
     
-    let selfSender = Sender(photoURL: "", senderId: "1", displayName: "Tommy")
-    let otherSender = Sender(photoURL: "", senderId: "2", displayName: "Tommy")
-    private var updateMassases: () -> () = {}
+    var chatID: String = String()
+    var otherId: String = String()
+    var avatar: String = String()
+    var photoURL: String = String()
+    var displayName: String = String()
+    
+    
+    let selfSender = Sender(photoURL: "", senderId: "1", displayName: "Cardinal")
+    
     
     // MARK: Lifecycle
     override func viewDidLoad() {
+        
+        let otherSender = Sender(photoURL: photoURL, senderId: otherId, displayName: "Nurgazy")
+        
         super.viewDidLoad()
         messagesCollectionView.translatesAutoresizingMaskIntoConstraints = false
         messagesCollectionView.keyboardDismissMode = .onDrag
-        
-        
-        messages.append(Message(sender: selfSender, messageId: "1", sentDate: Date(), kind: .text("Hello world message")))
-        messages.append(Message(sender: otherSender, messageId: "1", sentDate: Date(), kind: .text("Hello world message, Hello world message,Hello world message")))
-        
-        self.view.backgroundColor = .red
-        
-        messagesCollectionView.backgroundColor = .systemBackground
-        
+                
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         messagesCollectionView.messageCellDelegate = self
+        messagesCollectionView.delegate = self
         
-        // reload collection
-        messagesCollectionView.reloadDataAndKeepOffset()
-//        self.updateMassases = { [weak self] in
-//            self?.messagesCollectionView.reloadDataAndKeepOffset()
+//        if chatID == nil {
+//            dataBaseManger.getConvoId(otherId: otherId!) { [weak self] chatId in
+//                self?.chatID = chatId
+//                self?.getMessages(convoId: chatId)
+//            }
 //        }
-            
     }
+    
+    func getMessages(convoId: String) {
+            dataBaseManger.getAllMessages(chatId: convoId) { [weak self] messages in
+                self?.messages = messages
+                DispatchQueue.main.async {
+                    self?.messagesCollectionView.reloadDataAndKeepOffset()
+                }
+            }
+        }
+    
+    
+    
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(false)
@@ -74,20 +87,13 @@ final class ChatController: MessagesViewController {
         tb.customBar.isHidden = false
         navigationController?.navigationBar.tintColor = .white
     }
-    
-//    func keyboardWillShow(sender: NSNotification) {
-//        self.view.frame.origin.y -= 150
-//    }
-//    func keyboardWillHide(sender: NSNotification) {
-//        self.view.frame.origin.y += 150
-//    }
 }
 
 extension ChatController: MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate {
-    
     var currentSender: MessageKit.SenderType {
-        self.selfSender
+        selfSender
     }
+
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessageKit.MessagesCollectionView) -> MessageKit.MessageType {
         return messages[indexPath.section]
@@ -100,11 +106,28 @@ extension ChatController: MessagesDataSource, MessagesLayoutDelegate, MessagesDi
     }
     
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        
-        avatarView.image = UIImage(named: .loginLogo)
+        guard let url = URL(string: avatar ?? "") else { return }
+        avatarView.sd_setImage(with: url)
         avatarView.tintColor = .red
     }
+}
 
+extension ChatController: InputBarAccessoryViewDelegate {
+    
+    func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
+                print("input bar pressed")
+        
+        let msg = Message(sender: selfSender, messageId: "", sentDate: Date(), kind: .text(text))
+        messages.append(msg)
+        dataBaseManger.sendMessage(otherId: self.otherId ?? "", convoId: self.chatID, text: text) { [weak self] convoId in
+            
+            DispatchQueue.main.async {
+                inputBar.inputTextView.text = nil
+                self?.messagesCollectionView.reloadDataAndKeepOffset()
+            }
+            self?.chatID = convoId
+        }
+    }
 }
 
 extension ChatController: MessageCellDelegate{
@@ -160,4 +183,7 @@ extension ChatController: MessageCellDelegate{
     func didStopAudio(in cell: MessageKit.AudioMessageCell) {
         //
     }
+    
+    
 }
+

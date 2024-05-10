@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FA02393C2BEE4DB70075180C /* ConversationsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA02393B2BEE4DB70075180C /* ConversationsTableCell.swift */; };
 		FA08A0172BE3EF2800CC1EEF /* MainTabBarControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08A0162BE3EF2800CC1EEF /* MainTabBarControllerViewController.swift */; };
 		FA08A0192BE3EFC400CC1EEF /* UpcomingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08A0182BE3EFC400CC1EEF /* UpcomingController.swift */; };
 		FA08A01B2BE3F00000CC1EEF /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08A01A2BE3F00000CC1EEF /* Conversation.swift */; };
@@ -81,6 +82,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FA02393B2BEE4DB70075180C /* ConversationsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsTableCell.swift; sourceTree = "<group>"; };
 		FA08A0162BE3EF2800CC1EEF /* MainTabBarControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarControllerViewController.swift; sourceTree = "<group>"; };
 		FA08A0182BE3EFC400CC1EEF /* UpcomingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingController.swift; sourceTree = "<group>"; };
 		FA08A01A2BE3F00000CC1EEF /* Conversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
@@ -288,6 +290,7 @@
 				FA26E6E82BE63CB100924709 /* CollectionTableViewCell.swift */,
 				FA26E6F22BE6C0FD00924709 /* TitleCollectionViewCell.swift */,
 				FA26E6FB2BE7418B00924709 /* TitleTableViewCell.swift */,
+				FA02393B2BEE4DB70075180C /* ConversationsTableCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -487,6 +490,7 @@
 				FAD2ADA12BE48D35002383DE /* User.swift in Sources */,
 				FA26E6FE2BE7463200924709 /* TitleViewModel.swift in Sources */,
 				FA3EDD022BE9B0AE0047EE14 /* NewConversationController.swift in Sources */,
+				FA02393C2BEE4DB70075180C /* ConversationsTableCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

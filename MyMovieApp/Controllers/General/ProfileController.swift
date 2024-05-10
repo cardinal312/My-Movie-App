@@ -38,9 +38,9 @@ final class ProfileController: UIViewController {
         label.backgroundColor = .clear
         label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 25, weight: .bold)
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
         label.text = "Loading"
-        label.numberOfLines = 3
+        label.numberOfLines = 2
         label.textAlignment = .center
         return label
     }()
@@ -48,22 +48,18 @@ final class ProfileController: UIViewController {
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.navigationBar.tintColor = .gray
-        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(didTapLogout))
+        self.setupNavigationBar()
         self.view.backgroundColor = .systemBackground
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.largeTitleDisplayMode = .always
-        title = "Profile"
         self.setupUI()
-    
-        AuthManager.shared.fetchUser { [weak self] user, _  in
+        
+        DataBaseManager.shared.fetchUser { [weak self] user, _  in
             guard let self = self else { return }
             guard let user = user else { return }
             
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                self.infoLabel.text = "\(user.username)\n\(user.email)\n\(user.avatar.description)"
-                print("\(user.username)\n\(user.email)\n\(user.avatar.description)")
+                self.infoLabel.text = "\(user.username)\n\(user.email)"
+                print("\(user.username)\n\(user.email)\n\(user.userUID)")
                 
                 guard let url = URL(string: user.avatar) else { return }
                 self.profileImageView.sd_setImage(with: url)
@@ -87,16 +83,27 @@ final class ProfileController: UIViewController {
             if let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate {
                 sceneDelegate.checkAuthentication()
             }
-        // MARK: - UserDefaults, signOut Setting
+            // MARK: - UserDefaults, signOut Setting
             UserDefaults.standard.set(true, forKey: "signOut")
         }
     }
     
     @objc private func didTapImageView() {
-            DispatchQueue.main.async { [weak self] in
+        DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.present(self.imagePickerController, animated: true)
         }
+    }
+    
+    //MARK: - Setup Navigation Bar
+    private func setupNavigationBar() {
+
+        self.navigationController?.navigationBar.tintColor = .gray
+        var image = UIImage(named: .homeLeftBarButton)
+        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(didTapLogout))
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        title = "Profile"
     }
 }
 
@@ -138,7 +145,7 @@ extension ProfileController: UIImagePickerControllerDelegate, UINavigationContro
                 
                 switch results {
                 case .success(let imageUrl):
-                guard let url = URL(string: imageUrl) else { return }
+                    guard let url = URL(string: imageUrl) else { return }
                     
                     //SAVE IMAGE TO LOCAL STORAGE
                     DispatchQueue.main.async { [weak self] in
@@ -168,11 +175,10 @@ extension ProfileController: UIImagePickerControllerDelegate, UINavigationContro
             
             self.infoLabel.topAnchor.constraint(equalTo: self.profileImageView.bottomAnchor, constant: 30),
             self.infoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            self.infoLabel.widthAnchor.constraint(equalToConstant: 250),
             self.infoLabel.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
 }
-    
-    
+
+
 

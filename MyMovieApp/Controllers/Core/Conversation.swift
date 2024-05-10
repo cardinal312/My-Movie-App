@@ -18,7 +18,8 @@ final class Conversation: UIViewController {
     private lazy var conversationsTableView: UITableView = {
         let table = UITableView(frame: .zero, style: .grouped)
         table.backgroundColor = .systemBackground
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        //table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        table.register(ConversationsTableCell.self, forCellReuseIdentifier: ConversationsTableCell.identifier)
         table.delegate = self
         table.dataSource = self
         //table.isHidden = true
@@ -65,21 +66,18 @@ final class Conversation: UIViewController {
     }
     
     private func fetchCorversations() {
-        //self.conversationsTableView.isHidden = false
-        
-        self.spinner.show(in: self.view, animated: true)
+        self.conversationsTableView.isHidden = true
+        self.spinner.show(in: self.view)
         
         DataBaseManager.shared.fetchAllUsers { [weak self] users in
-            
+            self?.users = users
             DispatchQueue.main.async { [weak self] in
                 
                 self?.spinner.textLabel.text = "Loading"
                 
-                
-                self?.users = users
                 self?.conversationsTableView.reloadData()
+
                 self?.conversationsTableView.isHidden = false
-                
                 self?.spinner.dismiss()
             }
         }
@@ -94,10 +92,12 @@ extension Conversation: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as UITableViewCell
-        let usersdata =  self.users[indexPath.row]
-        cell.textLabel?.text = usersdata.username
-        cell.textLabel?.textColor = .gray
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ConversationsTableCell.identifier, for: indexPath) as? ConversationsTableCell else { return UITableViewCell() }
+        
+        cell.accessoryType = .disclosureIndicator
+        cell.configure(with: self.users[indexPath.row])
+        
+//        
         return cell
     }
     
@@ -107,13 +107,14 @@ extension Conversation: UITableViewDelegate, UITableViewDataSource {
         let vc = ChatController()
         let usersdata =  self.users[indexPath.row]
         vc.title = usersdata.username
+        vc.avatar = usersdata.avatar
+        vc.otherId = usersdata.id
         vc.navigationItem.largeTitleDisplayMode = .never
         
         navigationController?.pushViewController(vc, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        50
+        90
     }
-
 }

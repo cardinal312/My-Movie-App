@@ -52,6 +52,10 @@ final class TitlePreviewController: UIViewController {
         self.setupUI()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
     // MARK: - Setup UI
     private func setupUI() {
         self.view.addSubview(webView)

@@ -10,7 +10,7 @@ import Foundation
 struct User {
     let username: String
     let email: String
-    let userUID: String = ""
+    let userUID: String
     let avatar: String
     let gender: String = ""
     let age: Int = 0
